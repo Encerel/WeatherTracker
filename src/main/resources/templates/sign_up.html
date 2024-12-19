@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Weather Viewer – Sign Up</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
@@ -19,24 +19,58 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
-            <form action="#" class="mt-4">
+            <form th:action="@{/sign_up}" method="post" th:object="${user}" class="mt-4">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required value=""/>
+                    <label for="name" class="form-label">Username</label>
+                    <div class="input-group has-validation">
+                        <input type="text" id="name"
+                               name="name"
+                               th:classappend="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
+                               th:value="*{name}" required value=""/>
+                        <div class="invalid-feedback" th:errors="*{name}" >
+                            Password Error
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group has-validation">
+                        <input type="email" id="email"
+                               name="email"
+                               th:classappend="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                               th:value="*{email}" required value=""/>
+                        <div class="invalid-feedback" th:errors="*{email}" >
+                            Password Error
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required value=""/>
+                    <div class="input-group has-validation">
+                        <input type="password" id="password"
+                               name="password"
+                               th:classappend="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
+                               th:value="*{password}" required value=""/>
+                        <div class="invalid-feedback" th:errors="*{password}" >
+                            Password Error
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-3">
-                    <label for="repeat-password" class="form-label">Repeat password</label>
-                    <input type="password" class="form-control" id="repeat-password" name="password" required value=""/>
+                    <label for="confirmedPassword" class="form-label">Repeat password</label>
+                    <div class="input-group has-validation">
+                            <input type="password" id="confirmedPassword"
+                                   name="confirmedPassword"
+                                   th:classappend="${#fields.hasErrors('confirmedPassword')} ? 'form-control is-invalid' : 'form-control'"
+                                   th:value="*{confirmedPassword}" required value=""/>
+                            <div class="invalid-feedback" th:errors="*{confirmedPassword}" >
+                                    ConfirmedPassword Error
+                            </div>
+                    </div>
                 </div>
 
-                <input type="hidden" name="redirect_to" value="http://localhost/"/>
-
                 <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
-                <p class="mt-2 text-center">Already have an account? <a href="#">Sign in here</a></p>
+                <p class="mt-2 text-center">Already have an account? <a href="/sign_in">Sign in here</a></p>
             </form>
         </div>
     </div>
