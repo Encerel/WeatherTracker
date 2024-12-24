@@ -19,28 +19,36 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
+            <div th:if="${error != null}" th:text="${error}" class="alert alert-danger" role="alert">Error</div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-4 col-md-6 col-sm-12">
             <form th:action="@{/sign_up}" method="post" th:object="${user}" class="mt-4">
                 <div class="mb-3">
                     <label for="name" class="form-label">Username</label>
                     <div class="input-group has-validation">
-                        <input type="text" id="name"
+                        <input type="text"
+                               id="name"
                                name="name"
                                th:classappend="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
-                               th:value="*{name}" required value=""/>
+                               th:value="*{name}" required/>
                         <div class="invalid-feedback" th:errors="*{name}" >
-                            Password Error
+                            Name Error
                         </div>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <div class="input-group has-validation">
-                        <input type="email" id="email"
+                        <input type="email"
+                               id="email"
                                name="email"
                                th:classappend="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
-                               th:value="*{email}" required value=""/>
+                               th:value="*{email}" required/>
                         <div class="invalid-feedback" th:errors="*{email}" >
-                            Password Error
+                            Email Error
                         </div>
                     </div>
                 </div>
@@ -62,7 +70,7 @@
                             <input type="password" id="confirmedPassword"
                                    name="confirmedPassword"
                                    th:classappend="${#fields.hasErrors('confirmedPassword')} ? 'form-control is-invalid' : 'form-control'"
-                                   th:value="*{confirmedPassword}" required value=""/>
+                                   th:value="*{confirmedPassword}" required />
                             <div class="invalid-feedback" th:errors="*{confirmedPassword}" >
                                     ConfirmedPassword Error
                             </div>
