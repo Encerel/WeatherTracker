@@ -2,7 +2,6 @@ package by.yankavets.dao.impl;
 
 import by.yankavets.dao.Dao;
 import by.yankavets.entity.User;
-import jakarta.persistence.EntityManager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+
+import static by.yankavets.constant.ColumnName.EMAIL;
+import static by.yankavets.constant.ColumnName.PASSWORD;
 
 @Repository
 public class UserDao implements Dao<Integer, User> {
@@ -65,7 +67,25 @@ public class UserDao implements Dao<Integer, User> {
             session.getTransaction().commit();
             return User.builder()
                     .id(entity.getId())
+                    .email(entity.getEmail())
+                    .name(entity.getName())
                     .build();
         }
     }
+
+    public Optional<User> findByEmail( String email) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            User foundUser = session.createQuery("FROM User WHERE email = :email", User.class)
+                    .setParameter(EMAIL, email)
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
+
+            session.getTransaction().commit();
+            return Optional.ofNullable(foundUser);
+        }
+    }
+
 }
