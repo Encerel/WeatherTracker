@@ -1,5 +1,7 @@
 package by.yankavets.config;
 
+import by.yankavets.interceptor.LoginInterceptor;
+import by.yankavets.interceptor.RedirectIfAuthenticatedInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,16 +16,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
 import java.util.Properties;
+
+import static by.yankavets.constant.UrlPath.SIGN_IN_URL;
+import static by.yankavets.constant.UrlPath.SIGN_UP_URL;
 
 @Configuration
 @ComponentScan("by.yankavets")
@@ -34,6 +36,9 @@ public class SpringConfiguration implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
     private final Environment environment;
+    private final LoginInterceptor loginInterceptor;
+    private final RedirectIfAuthenticatedInterceptor redirectIfAuthenticatedInterceptor;
+
 
     public static final String HIBERNATE_DIALECT_PROPERTY = "hibernate.dialect";
     public static final String HIBERNATE_SHOW_SQL_PROPERTY = "hibernate.show_sql";
@@ -44,9 +49,11 @@ public class SpringConfiguration implements WebMvcConfigurer {
 
 
     @Autowired
-    public SpringConfiguration(ApplicationContext applicationContext, Environment environment) {
+    public SpringConfiguration(ApplicationContext applicationContext, Environment environment, LoginInterceptor loginInterceptor, RedirectIfAuthenticatedInterceptor redirectIfAuthenticatedInterceptor) {
         this.applicationContext = applicationContext;
         this.environment = environment;
+        this.loginInterceptor = loginInterceptor;
+        this.redirectIfAuthenticatedInterceptor = redirectIfAuthenticatedInterceptor;
     }
 
     @Bean
@@ -75,6 +82,7 @@ public class SpringConfiguration implements WebMvcConfigurer {
         registry.viewResolver(resolver);
     }
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/css/**")
@@ -85,6 +93,17 @@ public class SpringConfiguration implements WebMvcConfigurer {
 
         registry.addResourceHandler("/js/**")
                 .addResourceLocations("classpath:/static/js/");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(redirectIfAuthenticatedInterceptor)
+                .addPathPatterns(SIGN_IN_URL, SIGN_UP_URL);
+
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(SIGN_IN_URL, SIGN_UP_URL);
+
     }
 
     @Bean
@@ -117,6 +136,7 @@ public class SpringConfiguration implements WebMvcConfigurer {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 
     private Properties hibernateProperties() {
