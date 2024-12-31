@@ -1,4 +1,4 @@
-package by.yankavets.entity;
+package by.yankavets.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Data
-@ToString(exclude = "sessionEntities")
+@ToString(exclude = "sessions")
 public class User {
 
     @Id
@@ -29,8 +29,11 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<SessionEntity> sessionEntities;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<SessionEntity> sessions;
+
+    @OneToMany(mappedBy= "user",fetch = FetchType.LAZY)
+    private List<Location> locations;
 
 
 }
