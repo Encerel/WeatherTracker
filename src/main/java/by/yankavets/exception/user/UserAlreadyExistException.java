@@ -1,6 +1,4 @@
-package by.yankavets.exception;
-
-import jakarta.validation.constraints.Pattern;
+package by.yankavets.exception.user;
 
 public class UserAlreadyExistException extends RuntimeException {
 
