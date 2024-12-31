@@ -1,4 +1,4 @@
-package by.yankavets.exception;
+package by.yankavets.exception.user;
 
 public class InvalidEmailOrPasswordException extends RuntimeException {
 

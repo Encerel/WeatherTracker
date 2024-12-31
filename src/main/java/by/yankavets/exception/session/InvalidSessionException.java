@@ -1,4 +1,4 @@
-package by.yankavets.exception;
+package by.yankavets.exception.session;
 
 public class InvalidSessionException extends RuntimeException {
 
