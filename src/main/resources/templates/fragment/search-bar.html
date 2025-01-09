@@ -1,0 +1,10 @@
+<div class="d-flex my-4">
+    <form class="input-group location-search-input-group me-3" th:action="@{/locations/search}" method="get">
+        <input class="form-control" type="text" name="location_name" placeholder="Enter location" required>
+        <button class="btn btn-outline-secondary btn-sm clear-input-button" type="button"
+                onclick="this.previousElementSibling.value=''">
+            &times;
+        </button>
+        <button class="btn btn-outline-success">Search</button>
+    </form>
+</div>
