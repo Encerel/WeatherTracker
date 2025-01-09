@@ -2,12 +2,10 @@ package by.yankavets.config;
 
 import by.yankavets.interceptor.LoginInterceptor;
 import by.yankavets.interceptor.RedirectIfAuthenticatedInterceptor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -16,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
@@ -24,12 +23,14 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-import static by.yankavets.constant.UrlPath.SIGN_IN_URL;
-import static by.yankavets.constant.UrlPath.SIGN_UP_URL;
+import static by.yankavets.constant.UrlPath.*;
 
 @Configuration
 @ComponentScan("by.yankavets")
-@PropertySource("classpath:hibernate.properties")
+@PropertySources({
+        @PropertySource("classpath:hibernate.properties"),
+        @PropertySource("classpath:weatherApi.properties")}
+)
 @EnableTransactionManagement
 @EnableWebMvc
 public class SpringConfiguration implements WebMvcConfigurer {
@@ -85,13 +86,13 @@ public class SpringConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/css/**")
+        registry.addResourceHandler(CSS_URL)
                 .addResourceLocations("classpath:/static/css/");
 
-        registry.addResourceHandler("/images/**")
+        registry.addResourceHandler(IMAGE_URL)
                 .addResourceLocations("classpath:/static/images/");
 
-        registry.addResourceHandler("/js/**")
+        registry.addResourceHandler(JS_URL)
                 .addResourceLocations("classpath:/static/js/");
     }
 
@@ -101,8 +102,8 @@ public class SpringConfiguration implements WebMvcConfigurer {
                 .addPathPatterns(SIGN_IN_URL, SIGN_UP_URL);
 
         registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns(SIGN_IN_URL, SIGN_UP_URL);
+                .addPathPatterns(ALL_PAGES_URL_PATTERN)
+                .excludePathPatterns(SIGN_IN_URL, SIGN_UP_URL, CSS_URL, JS_URL, IMAGE_URL);
 
     }
 
@@ -120,7 +121,7 @@ public class SpringConfiguration implements WebMvcConfigurer {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("by.yankavets.entity");
+        sessionFactory.setPackagesToScan("by.yankavets.model.entity");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }
@@ -137,6 +138,15 @@ public class SpringConfiguration implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
 
 
     private Properties hibernateProperties() {
