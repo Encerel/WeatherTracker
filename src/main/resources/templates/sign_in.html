@@ -38,12 +38,12 @@
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
             <form th:action="@{/sign_in}" th:object="${user}" method="post" class="mt-4">
                 <div class="mb-3">
-                    <label for="email" class="form-label">Username</label>
+                    <label for="email" class="form-label">Email</label>
                     <div class="input-group has-validation">
                         <input type="email" id="email"
                                name="email"
                                th:classappend="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
-                               th:value="*{email}" required value=""/>
+                               th:value="*{email}" required />
                         <div class="invalid-feedback" th:errors="*{email}" >
                             Email Error
                         </div>
