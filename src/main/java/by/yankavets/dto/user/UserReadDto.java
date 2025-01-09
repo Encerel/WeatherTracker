@@ -1,4 +1,4 @@
-package by.yankavets.dto;
+package by.yankavets.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +10,7 @@ import java.util.UUID;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserReadDto {
 
     private Integer id;

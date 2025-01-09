@@ -1,7 +1,8 @@
-package by.yankavets.mapper;
+package by.yankavets.mapper.user;
 
-import by.yankavets.dto.UserReadDto;
-import by.yankavets.entity.User;
+import by.yankavets.dto.user.UserReadDto;
+import by.yankavets.mapper.Mapper;
+import by.yankavets.model.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component
