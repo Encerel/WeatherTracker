@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Data
-@ToString(exclude = "sessions")
+@ToString(exclude = {"locations", "sessions"})
 public class User {
 
     @Id
