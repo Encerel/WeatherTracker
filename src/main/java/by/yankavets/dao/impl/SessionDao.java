@@ -1,18 +1,20 @@
 package by.yankavets.dao.impl;
 
 import by.yankavets.dao.Dao;
-import by.yankavets.entity.SessionEntity;
+import by.yankavets.model.entity.SessionEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import static by.yankavets.constant.ParametersAndAttribute.SESSION_UUID;
 
 @Repository
-public class SessionDao implements Dao<Integer, SessionEntity> {
+public class SessionDao implements Dao<UUID, SessionEntity> {
 
 
     private final SessionFactory sessionFactory;
@@ -35,19 +37,25 @@ public class SessionDao implements Dao<Integer, SessionEntity> {
     }
 
     @Override
-    public Optional<SessionEntity> findById(Integer id) {
+    public Optional<SessionEntity> findById(UUID id) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            SessionEntity sessionEntity = session.find(SessionEntity.class, id);
+            SessionEntity sessionEntity = session.createQuery(
+                            "FROM SessionEntity s WHERE s.id = :session_uuid", SessionEntity.class)
+                    .setParameter(SESSION_UUID, id)
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
 
             session.getTransaction().commit();
-            return Optional.of(sessionEntity);
+            return Optional.ofNullable(sessionEntity);
         }
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public boolean delete(UUID id) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
@@ -73,4 +81,5 @@ public class SessionDao implements Dao<Integer, SessionEntity> {
         }
 
     }
+
 }
