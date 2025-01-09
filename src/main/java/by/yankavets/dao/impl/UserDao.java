@@ -1,7 +1,7 @@
 package by.yankavets.dao.impl;
 
 import by.yankavets.dao.Dao;
-import by.yankavets.entity.User;
+import by.yankavets.model.entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static by.yankavets.constant.ColumnName.EMAIL;
-import static by.yankavets.constant.ColumnName.PASSWORD;
 
 @Repository
 public class UserDao implements Dao<Integer, User> {
