@@ -1,14 +1,21 @@
-package by.yankavets.dto;
+package by.yankavets.dto.user;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserCreateDto {
 
     @NotBlank(message = "Name should not be empty!")
-    @Pattern(regexp = "^[a-zA-Zа-яА-Я0-9._-]{2,32}$", message = "Name should be between 2 and 32 characters")
+    @Pattern(regexp = "^[\\p{L}\\d\\s]{2,32}$", message = "Name should be between 2 and 32 characters")
     private String name;
 
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email is not valid")
