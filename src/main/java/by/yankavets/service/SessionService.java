@@ -1,12 +1,12 @@
 package by.yankavets.service;
 
 import by.yankavets.dao.impl.SessionDao;
-import by.yankavets.dto.UserReadDto;
-import by.yankavets.entity.SessionEntity;
-import by.yankavets.entity.User;
-import by.yankavets.exception.InvalidSessionException;
-import by.yankavets.exception.UserNotWithSuchIdNotFoundException;
-import by.yankavets.mapper.UserReadMapper;
+import by.yankavets.dto.user.UserReadDto;
+import by.yankavets.exception.session.InvalidSessionException;
+import by.yankavets.exception.user.UserWithSuchIdNotFoundException;
+import by.yankavets.mapper.user.UserReadMapper;
+import by.yankavets.model.entity.SessionEntity;
+import by.yankavets.model.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +30,11 @@ public class SessionService {
 
     @Transactional
     public SessionEntity createByUserId(Integer userId) {
+
+        if (userId == null) {
+            throw new UserWithSuchIdNotFoundException();
+        }
+
         SessionEntity sessionEntity = new SessionEntity();
         Optional<User> foundUser = userService.findById(userId);
         if (foundUser.isPresent()) {
@@ -37,15 +42,34 @@ public class SessionService {
             sessionEntity.setExpireAt(LocalDateTime.now().plusDays(1));
             return sessionDao.save(sessionEntity);
         }
-       throw new UserNotWithSuchIdNotFoundException(userId);
+       throw new UserWithSuchIdNotFoundException(userId);
     }
 
-    public Optional<SessionEntity> findByUserAndSessionId(UserReadDto userDto, UUID sessionId) {
-
-        Optional<User> foundUser = userService.findById(userDto.getId());
-        if (foundUser.isPresent()) {
-            return sessionDao.findByUserIdAndSessionId(userReadMapper.mapToEntity(userDto), sessionId);
+    public Optional<SessionEntity> findById(UUID id) {
+        if (id == null) {
+            throw new InvalidSessionException();
         }
-        throw new InvalidSessionException();
+        return sessionDao.findById(id);
+    }
+
+    public UserReadDto findUserBySessionId(UUID sessionId) {
+
+        Optional<SessionEntity> foundSession = sessionDao.findById(sessionId);
+        if (foundSession.isEmpty()) {
+            throw new InvalidSessionException();
+        }
+
+        Optional<User> foundUser = userService.findById(foundSession.get().getUser().getId());
+
+        if (foundUser.isEmpty()) {
+            throw new UserWithSuchIdNotFoundException(foundSession.get().getUser().getId());
+        }
+
+
+        return userReadMapper.mapToDto(foundUser.get());
+    }
+
+    public void deleteById(UUID sessionId) {
+        sessionDao.delete(sessionId);
     }
 }
