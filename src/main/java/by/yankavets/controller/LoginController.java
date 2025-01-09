@@ -1,13 +1,12 @@
 package by.yankavets.controller;
 
-import by.yankavets.dto.UserCreateDto;
-import by.yankavets.dto.UserLoginDto;
-import by.yankavets.dto.UserReadDto;
-import by.yankavets.entity.SessionEntity;
+import by.yankavets.dto.user.UserCreateDto;
+import by.yankavets.dto.user.UserLoginDto;
+import by.yankavets.dto.user.UserReadDto;
+import by.yankavets.model.entity.SessionEntity;
 import by.yankavets.service.SessionService;
 import by.yankavets.service.UserService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class LoginController {
     }
 
 
-    @GetMapping("sign_in")
+    @GetMapping(SIGN_IN_URL)
     public String loginPage(@RequestParam(value = SUCCESS, required = false) String successParam,
                             @ModelAttribute(USER) UserCreateDto userCreateDto,
                             Model model) {
@@ -45,17 +44,11 @@ public class LoginController {
         return SIGN_IN_PAGE;
     }
 
-    @GetMapping("/")
-    public String indexPage(Model model) {
-        return INDEX_PAGE;
-    }
 
-
-    @PostMapping("sign_in")
+    @PostMapping(SIGN_IN_URL)
     public String login(@ModelAttribute(USER) @Valid UserLoginDto user,
                         BindingResult bindingResult,
                         Model model,
-                        HttpServletRequest request,
                         HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
@@ -65,12 +58,10 @@ public class LoginController {
         try {
             UserReadDto foundUser = userService.findByEmailAndPassword(user);
             SessionEntity createdSession = sessionService.createByUserId(foundUser.getId());
-            foundUser.setSessionId(createdSession.getId());
-            request.getSession().setAttribute(USER, foundUser);
-            Cookie cookie = new Cookie(SESSION_UUID, foundUser.getSessionId().toString());
+            Cookie cookie = new Cookie(SESSION_UUID, createdSession.getId().toString());
             cookie.setMaxAge(60 * 60 * 24);
             response.addCookie(cookie);
-            return "redirect:" + INDEX_URL;
+            return REDIRECT + INDEX_URL;
         } catch (RuntimeException e) {
             model.addAttribute(ERROR, e.getMessage());
             return SIGN_IN_URL;
