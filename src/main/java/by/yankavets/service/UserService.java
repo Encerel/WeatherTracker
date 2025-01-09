@@ -1,22 +1,24 @@
 package by.yankavets.service;
 
 import by.yankavets.dao.impl.UserDao;
-import by.yankavets.dto.UserCreateDto;
-import by.yankavets.dto.UserLoginDto;
-import by.yankavets.dto.UserReadDto;
-import by.yankavets.entity.User;
-import by.yankavets.exception.InvalidEmailOrPasswordException;
-import by.yankavets.exception.PassworsdNotMatchException;
-import by.yankavets.exception.UserAlreadyExistException;
-import by.yankavets.mapper.UserCreateMapper;
-import by.yankavets.mapper.UserReadMapper;
+import by.yankavets.dto.user.UserCreateDto;
+import by.yankavets.dto.user.UserLoginDto;
+import by.yankavets.dto.user.UserReadDto;
+import by.yankavets.exception.user.InvalidEmailOrPasswordException;
+import by.yankavets.exception.user.PasswordsNotMatchException;
+import by.yankavets.exception.user.UserAlreadyExistException;
+import by.yankavets.mapper.user.UserCreateMapper;
+import by.yankavets.mapper.user.UserReadMapper;
+import by.yankavets.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class UserService {
 
     private final UserDao userDao;
@@ -41,14 +43,14 @@ public class UserService {
         }
 
         if (!userCreateDto.getPassword().equals(userCreateDto.getConfirmedPassword())) {
-            throw new PassworsdNotMatchException();
+            throw new PasswordsNotMatchException();
         }
 
         userCreateDto.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
-        User mappedUser = userCreateMapper.map(userCreateDto);
+        User mappedUser = userCreateMapper.mapToEntity(userCreateDto);
 
 
-        return userReadMapper.map(userDao.save(mappedUser));
+        return userReadMapper.mapToDto(userDao.save(mappedUser));
     }
 
 
@@ -59,7 +61,7 @@ public class UserService {
         if (foundUser.isPresent()) {
             User user = foundUser.get();
             if (passwordEncoder.matches(userLoginDto.getPassword(), user.getPassword())) {
-                return userReadMapper.map(user);
+                return userReadMapper.mapToDto(user);
             }
         }
         throw new InvalidEmailOrPasswordException();
