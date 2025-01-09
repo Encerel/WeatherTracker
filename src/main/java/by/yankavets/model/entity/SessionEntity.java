@@ -1,4 +1,4 @@
-package by.yankavets.entity;
+package by.yankavets.model.entity;
 
 
 import jakarta.persistence.*;
