@@ -1,9 +1,5 @@
 <h1 align="center">WeatherTracker</h1>
 
-## 📄 Task Description
-
-### [📝 Task](https://zhukovsd.github.io/java-backend-learning-course/projects/weather-viewer/)
-
 ### 📝 Main Technologies
 
 |  **Database**  |                                                     [![Postgresql](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)                                                      |
